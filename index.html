@@ -1,0 +1,2189 @@
+<!doctype html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>貓貓生肉計算機</title>
+
+
+
+<style>
+:root{
+  --bg:#f4f6fb;
+  --card:#ffffff;
+  --ink:#172033;
+  --muted:#778198;
+  --line:#e4e8f0;
+  --blue:#5267e8;
+  --blue-2:#eef0ff;
+  --blue-3:#f7f7ff;
+  --danger:#c65353;
+  --shadow:0 8px 28px rgba(31,42,78,.055);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+html{scroll-behavior:smooth}
+body{min-height:100vh}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI","PingFang HK","Noto Sans TC",sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:920px;margin:0 auto;padding:24px 16px 64px}
+
+/* Top */
+.hero{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:8px 2px 22px;
+  margin:0;
+  background:transparent;
+  border:0;
+  box-shadow:none;
+}
+.cat{
+  flex:0 0 auto;
+  width:46px;height:46px;
+  border-radius:14px;
+  display:grid;place-items:center;
+  background:#fff;
+  border:1px solid var(--line);
+  font-size:24px;
+}
+.hero-copy{min-width:0}
+.eyebrow{
+  display:none;
+}
+h1{
+  margin:0 0 5px;
+  font-size:25px;
+  font-weight:750;
+  line-height:1.1;
+  letter-spacing:-.025em;
+}
+.sub{
+  color:var(--muted);
+  font-size:12.5px;
+  line-height:1.5;
+}
+
+/* Segmented tabs */
+.tabs{
+  display:flex;
+  gap:4px;
+  position:sticky;
+  top:0;
+  z-index:30;
+  padding:6px;
+  margin:0 0 14px;
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(14px);
+}
+.tab{
+  flex:1;
+  border:0;
+  background:transparent;
+  color:#6f7a8a;
+  padding:9px 12px;
+  border-radius:10px;
+  font-size:13px;
+  font-weight:700;
+}
+.tab.active{
+  color:#fff;
+  background:var(--blue);
+  box-shadow:none;
+}
+.panel{display:none}
+.panel.active{display:block}
+
+/* Sections */
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px;
+  margin:12px 0;
+  box-shadow:none;
+}
+.card h2{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  margin:0 0 13px;
+  font-size:15px;
+  font-weight:750;
+  letter-spacing:-.01em;
+}
+.step{
+  min-width:25px;height:25px;
+  display:inline-grid;place-items:center;
+  border-radius:8px;
+  background:var(--blue-2);
+  color:var(--blue);
+  font-size:10px;
+  font-weight:800;
+}
+.section-lead{
+  margin:-3px 0 14px;
+  color:var(--muted);
+  font-size:11.5px;
+  line-height:1.55;
+}
+
+/* Forms */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.grid>div,.grid3>div{min-width:0}
+.field{
+  min-width:0;
+  padding:0;
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+label{
+  display:block;
+  margin:0 0 6px;
+  color:#778293;
+  font-size:11px;
+  font-weight:700;
+}
+input,select{
+  width:100%;
+  min-width:0;
+  height:44px;
+  border:1px solid #dfe6ee;
+  border-radius:11px;
+  background:#fff;
+  color:var(--ink);
+  padding:0 12px;
+  font:inherit;
+  font-size:15px;
+  box-shadow:none;
+}
+input:focus,select:focus{
+  outline:0;
+  border-color:#8ec7ff;
+  box-shadow:0 0 0 3px rgba(10,132,255,.10);
+}
+select{
+  -webkit-appearance:none;
+  appearance:none;
+  background-image:
+    linear-gradient(45deg,transparent 50%,#8792a3 50%),
+    linear-gradient(135deg,#8792a3 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;
+  background-size:5px 5px,5px 5px;
+  background-repeat:no-repeat;
+  padding-right:34px;
+}
+
+
+/* Custom choice dropdowns — aligned with the date picker */
+.native-select-hidden{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  overflow:hidden !important;
+  clip:rect(0 0 0 0) !important;
+  white-space:nowrap !important;
+}
+.choice-wrap{
+  position:relative;
+  min-width:0;
+}
+.choice-control{
+  width:100%;
+  min-width:0;
+  height:44px;
+  border:1px solid #dfe6ee;
+  border-radius:11px;
+  background:#fff;
+  color:var(--ink);
+  padding:0 10px 0 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  font:inherit;
+  font-size:15px;
+  text-align:left;
+  cursor:pointer;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.choice-control:hover{border-color:#c4caff;background:#fcfcff}
+.choice-control:focus{
+  outline:0;
+  border-color:#8ec7ff;
+  box-shadow:0 0 0 3px rgba(10,132,255,.10);
+}
+.choice-value{
+  min-width:0;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.choice-icon{
+  flex:0 0 auto;
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border-radius:8px;
+  color:var(--blue);
+  background:var(--blue-2);
+  transition:transform .16s ease;
+}
+.choice-wrap.open .choice-icon{transform:rotate(180deg)}
+.choice-menu{
+  position:absolute;
+  z-index:70;
+  top:calc(100% + 8px);
+  left:0;
+  width:100%;
+  min-width:240px;
+  max-height:320px;
+  overflow:auto;
+  padding:8px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 18px 48px rgba(26,35,70,.17);
+  animation:calendarIn .16s ease-out;
+}
+.choice-menu[hidden]{display:none}
+.choice-option{
+  width:100%;
+  border:0;
+  border-radius:11px;
+  background:#fff;
+  color:var(--ink);
+  padding:10px 11px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+}
+.choice-option:hover{background:var(--blue-3)}
+.choice-option.selected{background:var(--blue-2);color:var(--blue)}
+.choice-option-copy{min-width:0;display:block}
+.choice-option-main{display:block;font-size:13px;font-weight:750;line-height:1.25}
+.choice-option-meta{display:block;margin-top:3px;color:var(--muted);font-size:10.5px;line-height:1.3}
+.choice-option.selected .choice-option-meta{color:#7180c8}
+.choice-check{flex:0 0 auto;color:var(--blue);font-size:14px;font-weight:800}
+
+/* Stable custom date field for iPhone / Safari */
+.date-wrap{min-width:0;position:relative}
+.date-wrap::before{content:none !important}
+.date-control{
+  width:100%;
+  min-width:0;
+  height:44px;
+  border:1px solid #dfe6ee;
+  border-radius:11px;
+  background:#fff;
+  color:var(--ink);
+  padding:0 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  font:inherit;
+  font-size:15px;
+  text-align:left;
+  cursor:pointer;
+  transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;
+}
+.date-control:hover{border-color:#c4caff;background:#fcfcff}
+.date-control:focus{
+  outline:0;
+  border-color:#8ec7ff;
+  box-shadow:0 0 0 3px rgba(10,132,255,.10);
+}
+.date-control #startDateDisplay{
+  display:block;
+  min-width:0;
+  line-height:1;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.date-icon{
+  flex:0 0 auto;
+  width:28px;
+  height:28px;
+  display:grid;
+  place-items:center;
+  border-radius:8px;
+  color:var(--blue);
+  background:var(--blue-2);
+}
+.date-native-hidden{
+  position:absolute !important;
+  width:1px !important;
+  height:1px !important;
+  opacity:0 !important;
+  pointer-events:none !important;
+  left:0 !important;
+  bottom:0 !important;
+  border:0 !important;
+  padding:0 !important;
+}
+
+.calendar-popup{
+  position:absolute;
+  z-index:60;
+  top:calc(100% + 8px);
+  left:0;
+  width:min(320px, calc(100vw - 48px));
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:#fff;
+  box-shadow:0 18px 48px rgba(26,35,70,.17);
+  animation:calendarIn .16s ease-out;
+}
+.calendar-popup[hidden]{display:none}
+@keyframes calendarIn{from{opacity:0;transform:translateY(-5px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.calendar-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.calendar-head strong{font-size:14px;font-weight:750}
+.cal-nav{width:32px;height:32px;border:0;border-radius:10px;background:#f3f4ff;color:var(--blue);font-size:23px;line-height:1;cursor:pointer}
+.calendar-weekdays,.calendar-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px;text-align:center}
+.calendar-weekdays{margin-bottom:5px;color:var(--muted);font-size:11px;font-weight:700}
+.calendar-weekdays span{padding:5px 0}
+.cal-day{aspect-ratio:1;border:0;border-radius:10px;background:transparent;color:var(--ink);font:inherit;font-size:12px;cursor:pointer}
+.cal-day:hover{background:var(--blue-2);color:var(--blue)}
+.cal-day.muted{color:#b9c0ce}
+.cal-day.selected{background:var(--blue);color:#fff;font-weight:750;box-shadow:0 3px 8px rgba(82,103,232,.22)}
+.cal-day.today:not(.selected){box-shadow:inset 0 0 0 1px #aab3ff;color:var(--blue);font-weight:750}
+.calendar-foot{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);margin-top:10px;padding-top:10px}
+.cal-today,.cal-close{border:0;border-radius:9px;padding:8px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.cal-today{background:#f3f4ff;color:var(--blue)}
+.cal-close{background:var(--blue);color:white}
+.note{
+  color:var(--muted);
+  font-size:11.5px;
+  line-height:1.6;
+}
+.mini-note{
+  display:block;
+  margin-top:10px;
+  padding:9px 10px;
+  border-radius:10px;
+  background:var(--blue-3);
+  border:1px solid #e6f0fb;
+  color:#6f7d90;
+  font-size:11px;
+}
+
+/* Actions */
+.btn{
+  width:100%;
+  border:0;
+  border-radius:12px;
+  padding:14px 16px;
+  background:var(--blue);
+  color:#fff;
+  font-size:15px;
+  font-weight:750;
+  box-shadow:none;
+}
+.btn:active{opacity:.88}
+.btn.secondary{
+  background:#fff;
+  color:var(--blue);
+  border:1px solid #cfe5fb;
+  box-shadow:none;
+}
+
+/* Results */
+.result-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.best{
+  border-color:#cfe5fb;
+}
+.kpis{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+}
+.kpi{
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#fff;
+}
+.kpi span{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  font-weight:700;
+}
+.kpi b{
+  display:block;
+  margin-top:4px;
+  font-size:18px;
+  line-height:1.15;
+  letter-spacing:-.02em;
+}
+.good{color:var(--blue)}
+.bad{color:var(--danger)}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  padding:5px 8px;
+  border-radius:999px;
+  background:var(--blue-2);
+  color:var(--blue);
+  font-size:10px;
+  font-weight:750;
+}
+
+/* Tables */
+.table-wrap{
+  overflow-x:auto;
+  border:1px solid var(--line);
+  border-radius:13px;
+  background:#fff;
+}
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12.5px;
+}
+th,td{
+  text-align:left;
+  padding:10px 9px;
+  border-bottom:1px solid #eef2f6;
+  vertical-align:top;
+}
+tr:last-child td{border-bottom:0}
+th{
+  background:#fafcff;
+  color:#8490a1;
+  font-size:10px;
+  font-weight:750;
+}
+hr{
+  border:0;
+  border-top:1px solid var(--line);
+  margin:15px 0;
+}
+
+/* Price list */
+#priceTables table{
+  table-layout:fixed;
+  width:100%;
+}
+#priceTables th,
+#priceTables td{
+  vertical-align:middle;
+}
+#priceTables th:nth-child(1),
+#priceTables td:nth-child(1){width:46%;}
+#priceTables th:nth-child(2),
+#priceTables td:nth-child(2){width:34%;}
+#priceTables th:nth-child(3),
+#priceTables td:nth-child(3){width:20%;}
+#priceTables td input[data-price]{
+  display:block;
+  width:100% !important;
+  max-width:90px;
+  min-width:0;
+  vertical-align:middle;
+}
+.price-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:17px 0 7px;
+}
+.price-head h3{margin:0;font-size:13px}
+.category-dot{
+  width:7px;height:7px;
+  border-radius:50%;
+  display:inline-block;
+  margin-right:7px;
+  background:var(--blue);
+}
+
+.footer{
+  margin-top:18px;
+  padding:0 2px;
+  color:#98a2b1;
+  font-size:10px;
+  line-height:1.65;
+}
+
+/* Mobile */
+@media(max-width:700px){
+  .wrap{padding:16px 12px 48px}
+  .hero{align-items:flex-start;padding-bottom:14px}
+  .cat{width:42px;height:42px;border-radius:13px;font-size:22px}
+  h1{font-size:22px}
+  .sub{font-size:12px}
+  .tabs{
+    margin:0 0 12px;
+    overflow:visible;
+    white-space:normal;
+    padding:5px;
+  }
+  .tab{padding:9px 8px;font-size:12px}
+  .grid,.grid3{grid-template-columns:minmax(0,1fr)}
+  .card{padding:16px;border-radius:17px}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .date-control,.choice-control{min-height:48px}
+  .choice-menu{min-width:100%}
+}
+
+
+/* ===== v11 visual refinement: softer hierarchy, fewer nested outlines ===== */
+:root{
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --ink:#182033;
+  --muted:#7a8497;
+  --line:#e9edf4;
+  --blue:#5a6fe8;
+  --blue-2:#eef1ff;
+  --blue-3:#f6f7ff;
+  --field:#f5f7fb;
+  --field-hover:#f0f3f9;
+  --shadow:0 10px 30px rgba(36,47,82,.055);
+}
+
+body{background:var(--bg)}
+
+/* Cards are the main visual container, so remove the box-inside-box feeling */
+.card{
+  border:0;
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  padding:20px;
+}
+.card h2{margin-bottom:14px}
+.step{
+  border-radius:9px;
+  background:var(--blue-2);
+}
+
+/* Tabs: one soft surface instead of a framed control */
+.tabs{
+  border:0;
+  background:rgba(255,255,255,.94);
+  box-shadow:0 4px 16px rgba(36,47,82,.05);
+}
+.tab.active{
+  box-shadow:0 3px 10px rgba(74,92,190,.16);
+}
+
+/* Inputs: filled surfaces, not little outlined boxes */
+input,select,
+.choice-control,
+.date-control{
+  border:1px solid transparent;
+  background:var(--field);
+  border-radius:12px;
+  box-shadow:none;
+}
+input:hover,select:hover,
+.choice-control:hover,
+.date-control:hover{
+  border-color:transparent;
+  background:var(--field-hover);
+}
+input:focus,select:focus,
+.choice-control:focus,
+.date-control:focus{
+  outline:0;
+  border-color:rgba(90,111,232,.28);
+  background:#fff;
+  box-shadow:0 0 0 3px rgba(90,111,232,.10);
+}
+
+/* Choice/date icons feel integrated with the filled field */
+.choice-icon,.date-icon{
+  background:#e9edff;
+  border-radius:9px;
+}
+
+/* Dropdown/calendar cards use the same white surface system */
+.choice-menu,.calendar-popup{
+  border:0;
+  border-radius:18px;
+  box-shadow:0 18px 50px rgba(27,39,76,.14), 0 2px 8px rgba(27,39,76,.05);
+}
+.choice-option{
+  border-radius:10px;
+  background:transparent;
+}
+.choice-option:hover{background:#f5f7ff}
+.choice-option.selected{background:var(--blue-2)}
+.calendar-foot{border-top:0;padding-top:8px}
+
+/* Inventory/settings fields use spacing rather than mini containers */
+.field{background:transparent}
+label{
+  color:#7b8597;
+  margin-bottom:7px;
+}
+
+/* Notes: soft fill only, no outline */
+.mini-note{
+  border:0;
+  background:#f5f7ff;
+  padding:10px 12px;
+  border-radius:12px;
+}
+
+/* KPI blocks: soft tiles instead of outlined tiles */
+.kpi{
+  border:0;
+  background:#f7f8fc;
+  border-radius:14px;
+  padding:13px;
+}
+.best .kpi:first-child{background:#f3f5ff}
+
+/* Tables: remove the large outer frame; rows carry the structure */
+.table-wrap{
+  border:0;
+  border-radius:0;
+  background:transparent;
+  overflow-x:auto;
+}
+th{
+  background:transparent;
+  color:#8b94a4;
+  padding-top:8px;
+  padding-bottom:8px;
+}
+th,td{border-bottom:1px solid #edf0f5}
+tr:last-child td{border-bottom:0}
+
+/* Price list becomes a clean list rather than framed tables inside a card */
+#priceTables .table-wrap{
+  background:#fafbfe;
+  border-radius:14px;
+  padding:0 10px;
+}
+#priceTables table{background:transparent}
+#priceTables th{
+  padding-top:10px;
+  padding-bottom:7px;
+}
+#priceTables td{
+  padding-top:11px;
+  padding-bottom:11px;
+}
+#priceTables td input[data-price]{
+  height:36px;
+  max-width:88px;
+  background:#eef1f7;
+  border:1px solid transparent;
+  border-radius:10px;
+  padding:0 10px !important;
+  text-align:right;
+  font-weight:700;
+}
+#priceTables td input[data-price]:hover{background:#e9edf5}
+#priceTables td input[data-price]:focus{
+  background:#fff;
+  border-color:rgba(90,111,232,.28);
+  box-shadow:0 0 0 3px rgba(90,111,232,.10);
+}
+.price-head{
+  margin:20px 2px 8px;
+}
+.price-head:first-child{margin-top:16px}
+.price-head h3{
+  font-size:13px;
+  letter-spacing:-.01em;
+}
+.category-dot{
+  width:6px;
+  height:6px;
+  box-shadow:0 0 0 4px var(--blue-2);
+}
+
+/* Dividers are quieter */
+hr{
+  border-top-color:#eef1f5;
+  margin:18px 0;
+}
+
+/* Secondary action is a filled ghost button, not another outline */
+.btn.secondary{
+  background:#f1f4ff;
+  color:var(--blue);
+  border:0;
+}
+.btn.secondary:hover{background:#e9edff}
+
+/* Typography pass — clearer hierarchy, lighter overall feel */
+body{font-size:15px;line-height:1.45;font-weight:400;letter-spacing:-.006em}
+h1{font-size:27px;font-weight:700;line-height:1.12;letter-spacing:-.035em}
+.sub{font-size:13px;font-weight:400;line-height:1.5}
+.tab{font-size:13.5px;font-weight:600;letter-spacing:-.01em}
+.card h2{font-size:16px;font-weight:700;letter-spacing:-.018em;line-height:1.25}
+.step{font-size:10.5px;font-weight:700}
+.section-lead,.note{font-size:12.5px;font-weight:400;line-height:1.55}
+label{font-size:12px;font-weight:600;letter-spacing:0;color:#737e91}
+input,select,.choice-control,.date-control{font-size:15px;font-weight:500;letter-spacing:-.008em}
+.choice-option-main{font-size:13.5px;font-weight:600}
+.choice-option-meta{font-size:11px;font-weight:400}
+.mini-note{font-size:12px;font-weight:500;line-height:1.5}
+.btn{font-size:14.5px;font-weight:650;letter-spacing:-.01em}
+table{font-size:13px}
+th{font-size:10.5px;font-weight:650;letter-spacing:.01em}
+td{font-weight:450}
+.price-head h3{font-size:13.5px;font-weight:650}
+.kpi span{font-size:10.5px;font-weight:600}
+.kpi b{font-size:19px;font-weight:700}
+.pill{font-size:10.5px;font-weight:650}
+.footer{font-size:10.5px;font-weight:400}
+
+/* Compact units sit inside filled inputs instead of repeating in labels */
+.field,.grid>div,.grid3>div{position:relative}
+.unit-suffix{
+  position:absolute;right:12px;bottom:13px;z-index:2;
+  color:#929bad;font-size:11px;font-weight:600;pointer-events:none;
+}
+.field:has(.unit-suffix) input,.grid>div:has(.unit-suffix) input,.grid3>div:has(.unit-suffix) input{padding-right:48px}
+.settings-note{margin-top:14px}
+
+@media(max-width:700px){
+  h1{font-size:24px}
+  .sub{font-size:12.5px}
+  .tab{font-size:12.5px;font-weight:600}
+  .card{padding:17px;border-radius:18px}
+  .card h2{font-size:15.5px}
+  label{font-size:11.5px}
+  input,select,.choice-control,.date-control{font-size:15px}
+  #priceTables .table-wrap{padding:0 8px}
+}
+
+
+/* v15: price field uses a compact currency prefix and regular typography */
+#priceTables .price-input-wrap{
+  display:inline-flex;
+  align-items:center;
+  width:88px;
+  height:36px;
+  padding:0 10px;
+  border:1px solid transparent;
+  border-radius:10px;
+  background:#eef1f7;
+  transition:background .18s ease,border-color .18s ease,box-shadow .18s ease;
+}
+#priceTables .price-input-wrap:hover{background:#e9edf5}
+#priceTables .price-input-wrap:focus-within{
+  background:#fff;
+  border-color:rgba(90,111,232,.28);
+  box-shadow:0 0 0 3px rgba(90,111,232,.10);
+}
+#priceTables .price-prefix{
+  flex:0 0 auto;
+  margin-right:2px;
+  color:var(--ink);
+  font:inherit;
+  font-size:13px;
+  font-weight:400;
+  line-height:1;
+}
+#priceTables td input[data-price]{
+  flex:1 1 auto;
+  width:0 !important;
+  min-width:0;
+  max-width:none;
+  height:34px;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0;
+  background:transparent !important;
+  box-shadow:none !important;
+  color:var(--ink);
+  font:inherit;
+  font-size:13px;
+  font-weight:400;
+  text-align:left;
+}
+#priceTables td input[data-price]:focus{outline:0}
+
+/* v17: keep Price List inside the same content width, with no horizontal scroll */
+#prices .card{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+#priceTables,
+#priceTables .table-wrap,
+#priceTables table{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+#priceTables .table-wrap{
+  overflow-x:visible;
+}
+#priceTables table{
+  table-layout:fixed;
+}
+#priceTables th,
+#priceTables td{
+  min-width:0;
+  overflow-wrap:anywhere;
+  word-break:normal;
+}
+#priceTables th:nth-child(1),
+#priceTables td:nth-child(1){width:44%;}
+#priceTables th:nth-child(2),
+#priceTables td:nth-child(2){width:32%;}
+#priceTables th:nth-child(3),
+#priceTables td:nth-child(3){width:24%;}
+#priceTables .price-input-wrap{
+  width:100%;
+  max-width:88px;
+  min-width:0;
+}
+
+@media(max-width:700px){
+  #priceTables .table-wrap{padding:0 6px;}
+  #priceTables th,
+  #priceTables td{padding-left:7px;padding-right:7px;}
+  #priceTables th:nth-child(1),
+  #priceTables td:nth-child(1){width:40%;}
+  #priceTables th:nth-child(2),
+  #priceTables td:nth-child(2){width:31%;}
+  #priceTables th:nth-child(3),
+  #priceTables td:nth-child(3){width:29%;}
+  #priceTables .price-input-wrap{max-width:76px;padding-left:8px;padding-right:8px;}
+}
+
+/* Portion recommendation */
+.split-inputs{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+.unit-field{position:relative;min-width:0}
+.portion-hero{
+  padding:18px;
+  border-radius:16px;
+  background:linear-gradient(180deg,#f7f8ff 0%,#f3f5ff 100%);
+}
+.portion-hero .portion-label{
+  color:var(--muted);
+  font-size:12px;
+  font-weight:500;
+  margin-bottom:5px;
+}
+.portion-hero .portion-value{
+  display:flex;
+  align-items:baseline;
+  gap:5px;
+  font-size:32px;
+  line-height:1.05;
+  letter-spacing:-.035em;
+  font-weight:700;
+}
+.portion-hero .portion-value small{
+  font-size:14px;
+  font-weight:500;
+  color:var(--muted);
+  letter-spacing:0;
+}
+.portion-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:12px;
+}
+.portion-chip{
+  display:inline-flex;
+  align-items:center;
+  min-height:28px;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#fff;
+  color:#667188;
+  font-size:11px;
+  font-weight:500;
+}
+.portion-breakdown{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:8px;
+  margin-top:14px;
+}
+.portion-item{
+  min-width:0;
+  padding:12px 10px;
+  border-radius:13px;
+  background:#f6f7fb;
+}
+.portion-item span{
+  display:block;
+  color:var(--muted);
+  font-size:10.5px;
+  font-weight:500;
+  margin-bottom:4px;
+}
+.portion-item b{
+  display:block;
+  font-size:15px;
+  font-weight:600;
+  line-height:1.2;
+}
+.portion-rule{
+  margin-top:12px;
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.55;
+}
+@media(max-width:700px){
+  .portion-breakdown{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .portion-breakdown .portion-item:last-child{grid-column:span 2}
+}
+
+/* Second-level tabs inside 生肉計算機 */
+.subtabs{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  padding:4px;
+  margin:0 0 12px;
+  border-radius:12px;
+  background:#eef1f6;
+}
+.subtab{
+  min-width:104px;
+  border:0;
+  border-radius:9px;
+  padding:8px 16px;
+  background:transparent;
+  color:#7a8495;
+  font:inherit;
+  font-size:12.5px;
+  font-weight:550;
+  cursor:pointer;
+  transition:background .16s ease,color .16s ease,box-shadow .16s ease;
+}
+.subtab:hover{color:#56647a}
+.subtab.active{
+  background:#fff;
+  color:var(--ink);
+  font-weight:650;
+  box-shadow:0 1px 5px rgba(28,39,70,.08);
+}
+.subpanel{display:none}
+.subpanel.active{display:block}
+
+@media(max-width:700px){
+  .subtabs{display:flex;width:100%}
+  .subtab{flex:1;min-width:0}
+}
+
+/* v22 order settings */
+.label-with-tip{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:7px;
+}
+.label-with-tip label{margin:0}
+.info-tip{
+  position:relative;
+  flex:0 0 auto;
+  width:18px;
+  height:18px;
+  display:inline-grid;
+  place-items:center;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  background:#e9edff;
+  color:var(--blue);
+  font:inherit;
+  font-size:10px;
+  font-weight:700;
+  line-height:1;
+  cursor:help;
+}
+.tooltip-bubble{
+  position:absolute;
+  z-index:90;
+  left:50%;
+  bottom:calc(100% + 8px);
+  width:min(270px,calc(100vw - 48px));
+  padding:9px 10px;
+  border-radius:11px;
+  background:#20283a;
+  color:#fff;
+  font-size:11px;
+  font-weight:400;
+  line-height:1.45;
+  text-align:left;
+  box-shadow:0 10px 28px rgba(24,32,51,.18);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transform:translate(-50%,4px);
+  transition:opacity .14s ease,transform .14s ease,visibility .14s ease;
+}
+.info-tip:hover .tooltip-bubble,
+.info-tip:focus .tooltip-bubble,
+.info-tip:focus-visible .tooltip-bubble{
+  opacity:1;
+  visibility:visible;
+  transform:translate(-50%,0);
+}
+.info-tip:focus{outline:0;box-shadow:0 0 0 3px rgba(90,111,232,.12)}
+
+.limit-control{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  align-items:center;
+}
+.limit-input{position:relative;min-width:0}
+.limit-input input{padding-left:28px}
+.limit-currency{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#8d96a8;
+  font-size:12px;
+  font-weight:500;
+  pointer-events:none;
+}
+.unlimited-toggle{
+  height:44px;
+  min-width:60px;
+  padding:0 14px;
+  border:0;
+  border-radius:12px;
+  background:var(--field);
+  color:#788397;
+  font:inherit;
+  font-size:12.5px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background .16s ease,color .16s ease,box-shadow .16s ease;
+}
+.unlimited-toggle:hover{background:var(--field-hover)}
+.unlimited-toggle.active,
+.unlimited-toggle[aria-pressed="true"]{
+  background:var(--blue-2);
+  color:var(--blue);
+}
+.limit-control.is-unlimited .limit-input{opacity:.45}
+.limit-control.is-unlimited .limit-input input{cursor:not-allowed}
+@media(max-width:700px){
+  .tooltip-bubble{left:0;transform:translate(0,4px)}
+  .info-tip:hover .tooltip-bubble,
+  .info-tip:focus .tooltip-bubble,
+  .info-tip:focus-visible .tooltip-bubble{transform:translate(0,0)}
+}
+
+/* v23: keep 餵食設定 fixed inside the viewport */
+#settings{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  overflow-x:clip;
+}
+#settings .card,
+#settings .grid,
+#settings .grid3,
+#settings .field,
+#settings .grid > div,
+#settings .grid3 > div{
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
+#settings input,
+#settings select,
+#settings .choice-control,
+#settings .limit-control{
+  max-width:100%;
+  min-width:0;
+}
+
+/* Tooltip is anchored to the label row so it never widens the page */
+#settings .label-with-tip{
+  position:relative;
+}
+@media(max-width:700px){
+  #settings .info-tip{
+    position:static;
+  }
+  #settings .tooltip-bubble{
+    left:0;
+    right:auto;
+    bottom:calc(100% + 7px);
+    width:min(270px,100%);
+    max-width:100%;
+    transform:translateY(4px);
+  }
+  #settings .info-tip:hover .tooltip-bubble,
+  #settings .info-tip:focus .tooltip-bubble,
+  #settings .info-tip:focus-visible .tooltip-bubble{
+    transform:translateY(0);
+  }
+}
+
+/* v25 first-use empty state */
+input::placeholder{
+  color:#aab2c0;
+  font-weight:400;
+  opacity:1;
+}
+
+/* v26 action button states */
+.btn,
+.btn.secondary{
+  transition:background .16s ease,color .16s ease,opacity .16s ease,box-shadow .16s ease;
+}
+.btn:disabled,
+.btn.secondary:disabled{
+  background:#e7eaf0 !important;
+  color:#a1a9b7 !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  cursor:not-allowed;
+  opacity:1;
+}
+.btn:not(:disabled){cursor:pointer}
+
+/* v27 subtle clear action */
+.section-head-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin:0 0 13px;
+}
+.section-head-row h2{
+  margin:0;
+}
+.clear-mini{
+  flex:0 0 auto;
+  border:0;
+  background:transparent;
+  color:#98a1b0;
+  padding:4px 2px;
+  font:inherit;
+  font-size:11.5px;
+  font-weight:500;
+  cursor:pointer;
+  border-radius:7px;
+  transition:color .15s ease,background .15s ease;
+}
+.clear-mini:hover{
+  color:#6f7888;
+  background:#f3f5f8;
+}
+.clear-mini:focus{
+  outline:0;
+  box-shadow:0 0 0 3px rgba(82,103,232,.10);
+}
+
+</style>
+
+
+
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="cat">🐈</div>
+    <div class="hero-copy">
+      <div class="eyebrow">RAW FEEDING PLANNER</div>
+      <h1>貓貓生肉計算機</h1>
+      <div class="sub">餵食設定、每日份量，同落單計算放埋一齊。</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="settings">餵食設定</button>
+    <button class="tab" data-tab="rawcalc">生肉計算機</button>
+    <button class="tab" data-tab="prices">價目表</button>
+  </div>
+
+
+  <section id="settings" class="panel active">
+    <div class="card">
+      <div class="section-head-row">
+        <h2>每日份量</h2>
+        <button type="button" class="clear-mini" id="clearDailyBtn">清除全部</button>
+      </div>
+      <div class="grid3">
+        <div class="field"><label>高脂肉</label><input id="gHigh" type="number" min="0" step="1" inputmode="decimal" placeholder="請輸入份量"><span class="unit-suffix">g/日</span></div>
+        <div class="field"><label>低脂 A</label><input id="gLowA" type="number" min="0" step="1" inputmode="decimal" placeholder="請輸入份量"><span class="unit-suffix">g/日</span></div>
+        <div class="field"><label>低脂 B</label><input id="gLowB" type="number" min="0" step="1" inputmode="decimal" placeholder="請輸入份量"><span class="unit-suffix">g/日</span></div>
+        <div class="field"><label>心</label><input id="gHeart" type="number" min="0" step="1" inputmode="decimal" placeholder="請輸入份量"><span class="unit-suffix">g/日</span></div>
+        <div class="field"><label>肝</label><input id="gLiver" type="number" min="0" step="1" inputmode="decimal" placeholder="請輸入份量"><span class="unit-suffix">g/日</span></div>
+        <div class="field"><label>第二內臟</label><input id="gSecond" type="number" min="0" step="1" inputmode="decimal" placeholder="請輸入份量"><span class="unit-suffix">g/日</span></div>
+        <div class="field"><label>骨</label><input id="gBone" type="number" min="0" step="1" inputmode="decimal" placeholder="請輸入份量"><span class="unit-suffix">g/日</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>落單設定</h2>
+      <div class="grid">
+        <div class="field">
+          <label>收貨日期</label>
+          <select id="deliveryWeekday">
+            <option value="" selected disabled>請選擇收貨日期</option>
+            <option value="1">星期一</option>
+            <option value="2">星期二</option>
+            <option value="3">星期三</option>
+            <option value="4">星期四</option>
+            <option value="5">星期五</option>
+            <option value="6">星期六</option>
+            <option value="0">星期日</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>最遲落單</label>
+          <select id="orderWeekday">
+            <option value="" selected disabled>請選擇最遲落單日</option>
+            <option value="1">星期一</option>
+            <option value="2">星期二</option>
+            <option value="3">星期三</option>
+            <option value="4">星期四</option>
+            <option value="5">星期五</option>
+            <option value="6">星期六</option>
+            <option value="0">星期日</option>
+          </select>
+        </div>
+
+        <div>
+          <label>最低送貨金額</label>
+          <input id="minOrder" type="number" min="0" step="1" inputmode="decimal" placeholder="請輸入最低金額">
+          <span class="unit-suffix">$</span>
+        </div>
+
+        <div class="field">
+          <label>金額上限(每包肉)</label>
+          <div class="limit-control">
+            <div class="limit-input">
+              <input id="maxDaily" type="number" min="0" step="1" inputmode="decimal" aria-label="每包肉金額上限" placeholder="請輸入金額">
+              <span class="limit-currency">$</span>
+            </div>
+            <button type="button" class="unlimited-toggle" id="maxDailyUnlimitedBtn" aria-pressed="false">不限</button>
+          </div>
+        </div>
+
+        <div>
+          <div class="label-with-tip">
+            <label>最少日數(每轉訂肉)</label>
+            <button type="button" class="info-tip" aria-label="最少日數說明">
+              i
+              <span class="tooltip-bubble" role="tooltip">用於建議每轉訂幾多日份量，系統會喺設定範圍內比較，揀食完後剩貨最少嘅方案。</span>
+            </button>
+          </div>
+          <input id="minDays" type="number" min="1" step="1" inputmode="numeric" placeholder="請輸入最少日數">
+          <span class="unit-suffix">日</span>
+        </div>
+
+        <div>
+          <div class="label-with-tip">
+            <label>最多日數(每轉訂肉)</label>
+            <button type="button" class="info-tip" aria-label="最多日數說明">
+              i
+              <span class="tooltip-bubble" role="tooltip">用於建議每轉訂幾多日份量，系統會喺設定範圍內比較，揀食完後剩貨最少嘅方案。</span>
+            </button>
+          </div>
+          <input id="maxDays" type="number" min="1" step="1" inputmode="numeric" placeholder="請輸入最多日數">
+          <span class="unit-suffix">日</span>
+        </div>
+      </div>
+      <div class="note settings-note">按你選擇嘅星期，自動計算實際收貨日期同最遲落單日期。</div>
+      <button class="btn secondary" id="saveBtn" style="margin-top:14px">儲存</button>
+    </div>
+  </section>
+
+
+  <section id="rawcalc" class="panel">
+    <div class="subtabs" role="tablist" aria-label="生肉計算機">
+      <button class="subtab active" type="button" data-subtab="order" role="tab" aria-selected="true">落單</button>
+      <button class="subtab" type="button" data-subtab="portion" role="tab" aria-selected="false">份量建議</button>
+    </div>
+
+    <div id="orderSubpanel" class="subpanel active" data-subpanel="order">
+    <div class="card">
+      <h2><span class="step">01</span> 自選餐單</h2><div class="section-lead">揀肉、內臟同骨。</div>
+      <div class="grid">
+        <div class="date-wrap field">
+          <label>開始日期</label>
+          <button type="button" class="date-control" id="dateControl" aria-label="選擇第一包日期">
+            <span id="startDateDisplay">2026年11月14日</span>
+            <span class="date-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="5" width="18" height="16" rx="3"></rect>
+                <path d="M8 3v4M16 3v4M3 10h18"></path>
+              </svg>
+            </span>
+          </button>
+          <input id="startDate" class="date-native-hidden" type="date" value="2026-11-14" tabindex="-1" aria-hidden="true">
+          <div id="calendarPopup" class="calendar-popup" role="dialog" aria-label="選擇第一包日期" hidden>
+            <div class="calendar-head">
+              <button type="button" id="calPrev" class="cal-nav" aria-label="上個月">‹</button>
+              <strong id="calMonthLabel"></strong>
+              <button type="button" id="calNext" class="cal-nav" aria-label="下個月">›</button>
+            </div>
+            <div class="calendar-weekdays"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+            <div id="calendarDays" class="calendar-days"></div>
+            <div class="calendar-foot">
+              <button type="button" id="calToday" class="cal-today">今日</button>
+              <button type="button" id="calClose" class="cal-close">完成</button>
+            </div>
+          </div>
+        </div>
+        <div class="field">
+          <label>日數</label>
+          <select id="mode">
+            <option value="auto">自動建議</option>
+            <option value="fixed" selected>指定日數</option>
+          </select>
+        </div>
+        <div id="fixedWrap" class="field" style="display:block">
+          <label>指定日數</label>
+          <input id="fixedDays" type="number" min="1" value="20">
+        </div>
+        <div class="field">
+          <label>高脂肉</label>
+          <select id="highFat"></select>
+        </div>
+        <div class="field">
+          <label>低脂肉 A</label>
+          <select id="lowFatA"></select>
+        </div>
+        <div class="field">
+          <label>低脂肉 B</label>
+          <select id="lowFatB"></select>
+        </div>
+        <div class="field">
+          <label>心</label>
+          <select id="heart"></select>
+        </div>
+        <div class="field">
+          <label>肝</label>
+          <select id="liver"></select>
+        </div>
+        <div class="field">
+          <label>第二內臟</label>
+          <select id="secondOrgan"></select>
+        </div>
+        <div class="field">
+          <label>骨</label>
+          <select id="bone"></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">02</span> 上次剩貨</h2>
+      <div class="note">按類別填剩餘重量（g）。</div>
+      <div id="inventoryGrid" class="grid" style="margin-top:12px"></div>
+    </div>
+
+    <button class="btn" id="calcBtn">計算</button>
+    <div id="results"></div>
+  
+    </div>
+
+    <div id="portionSubpanel" class="subpanel" data-subpanel="portion">
+    <div class="card">
+      <h2>每日份量建議</h2>
+      <div class="section-lead">按你 Excel「To fill」嘅規則計算每日建議生肉份量。</div>
+      <div class="grid">
+        <div class="field">
+          <label>年齡</label>
+          <div class="split-inputs">
+            <div class="unit-field"><input id="portionAgeYears" type="number" min="0" step="1" inputmode="numeric" placeholder="請輸入歲數"><span class="unit-suffix">歲</span></div>
+            <div class="unit-field"><input id="portionAgeMonths" type="number" min="0" max="11" step="1" inputmode="numeric" placeholder="月數"><span class="unit-suffix">月</span></div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>目標體重</label>
+          <input id="portionWeight" type="number" min="0.1" step="0.1" inputmode="decimal" placeholder="請輸入體重">
+          <span class="unit-suffix">kg</span>
+        </div>
+
+        <div class="field">
+          <label>飲食方式</label>
+          <select id="portionDiet">
+            <option value="" selected disabled>請選擇飲食方式</option>
+            <option value="withBones">連骨</option>
+            <option value="boneless">無骨</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>已絕育？</label>
+          <select id="portionNeutered">
+            <option value="" selected disabled>請選擇</option>
+            <option value="yes">是</option>
+            <option value="no">否</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>高活動量？</label>
+          <select id="portionActive">
+            <option value="" selected disabled>請選擇</option>
+            <option value="no">否</option>
+            <option value="yes">是</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" id="portionCalcBtn" style="margin-top:16px">計算建議份量</button>
+    </div>
+
+    <div id="portionResults"></div>
+  
+    </div>
+  </section>
+
+
+  <section id="prices" class="panel">
+    <div class="card">
+      <div class="result-title"><h2>價目表</h2><span class="pill">可改價</span></div>
+      <div class="note">「高脂 / 低脂」係你目前餵食分類，不是供應商標示的脂肪百分比。</div>
+      <div id="priceTables"></div>
+    </div>
+  </section>
+
+  <div class="footer">
+    此工具用作你自己的購物及分裝計算，不代替獸醫營養配方。價目以你提供的 2026-06-01 供應商清單為基礎；供應商註明價格可隨時更改。lb 以 453.592g 計。
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY='catRawCalcV26';
+const LEGACY_STORAGE_KEY='catRawCalc';
+const LB=453.592;
+let products = [
+  {id:'chicken_thigh',name:'雞上髀連皮',cat:'高脂肉',unitLabel:'2kg/包',unitG:2000,price:118},
+  {id:'pork_shank',name:'Batalle 豬展',cat:'高脂肉',unitLabel:'1lb',unitG:LB,price:48},
+
+  {id:'chicken_breast',name:'雞胸',cat:'低脂肉',unitLabel:'1kg/包',unitG:1000,price:88},
+  {id:'beef_knuckle_br',name:'巴西牛冧',cat:'低脂肉',unitLabel:'1lb',unitG:LB,price:55},
+  {id:'beef_knuckle_nz',name:'NZ Silver Fern 牛冧',cat:'低脂肉',unitLabel:'1lb',unitG:LB,price:67},
+  {id:'pork_tenderloin',name:'PF 豬柳',cat:'低脂肉',unitLabel:'1lb',unitG:LB,price:68},
+  {id:'turkey_breast',name:'火雞胸',cat:'低脂肉',unitLabel:'1lb',unitG:LB,price:78},
+  {id:'venison',name:'鹿肩肉',cat:'低脂肉',unitLabel:'1lb',unitG:LB,price:98},
+  {id:'beef_tenderloin',name:'NZ 牛柳',cat:'低脂肉',unitLabel:'1lb',unitG:LB,price:138},
+  {id:'duck_breast',name:'去皮鴨胸',cat:'低脂肉',unitLabel:'2包 (約260–360g)',unitG:310,price:85},
+  {id:'lamb_tenderloin',name:'羊柳',cat:'低脂肉',unitLabel:'1kg',unitG:1000,price:185},
+
+  {id:'beef_heart',name:'牛心',cat:'肌肉內臟',unitLabel:'100g',unitG:100,price:20},
+  {id:'pork_heart',name:'豬心',cat:'肌肉內臟',unitLabel:'100g',unitG:100,price:20},
+  {id:'chicken_heart',name:'雞心',cat:'肌肉內臟',unitLabel:'10粒',unitG:180,price:50,pcs:10},
+  {id:'duck_heart',name:'鴨心',cat:'肌肉內臟',unitLabel:'10粒',unitG:180,price:88,pcs:10},
+  {id:'beef_tripe',name:'牛草胃',cat:'肌肉內臟',unitLabel:'100g',unitG:100,price:30},
+  {id:'duck_gizzard',name:'鴨胗',cat:'肌肉內臟',unitLabel:'100g',unitG:100,price:30},
+  {id:'turkey_gizzard',name:'火雞胗',cat:'肌肉內臟',unitLabel:'100g',unitG:100,price:25},
+  {id:'ox_tongue',name:'牛舌',cat:'肌肉內臟',unitLabel:'100g',unitG:100,price:20},
+  {id:'beef_lung',name:'牛肺',cat:'肌肉內臟',unitLabel:'100g',unitG:100,price:20},
+
+  {id:'chicken_liver',name:'雞肝',cat:'肝',unitLabel:'100g',unitG:100,price:20},
+  {id:'beef_liver',name:'牛肝',cat:'肝',unitLabel:'100g',unitG:100,price:22},
+  {id:'pork_liver',name:'豬肝',cat:'肝',unitLabel:'100g',unitG:100,price:25},
+  {id:'duck_liver',name:'鴨肝',cat:'肝',unitLabel:'100g',unitG:100,price:30},
+
+  {id:'beef_kidney',name:'牛腎',cat:'第二內臟',unitLabel:'100g',unitG:100,price:20},
+  {id:'beef_spleen',name:'牛脾',cat:'第二內臟',unitLabel:'100g',unitG:100,price:20},
+  {id:'pork_spleen',name:'豬脾',cat:'第二內臟',unitLabel:'100g',unitG:100,price:20},
+
+  {id:'chicken_neck_cut',name:'粒粒雞頸',cat:'骨',unitLabel:'300g',unitG:300,price:38},
+  {id:'chicken_neck',name:'完整雞頸',cat:'骨',unitLabel:'300g',unitG:300,price:33}
+];
+
+const $=id=>document.getElementById(id);
+const pById=id=>products.find(p=>p.id===id);
+const fmt=n=>Math.round(n*100)/100;
+const money=n=>'$'+fmt(n).toFixed(2);
+
+function optionsFor(cat, selected){
+  return products.filter(p=>p.cat===cat).map(p=>`<option value="${p.id}" ${p.id===selected?'selected':''}>${p.name}｜${p.unitLabel}｜$${p.price}</option>`).join('');
+}
+
+function formatDateHK(iso){
+  if(!iso) return '請選擇日期';
+  const [y,m,d]=iso.split('-').map(Number);
+  return `${y}年${m}月${d}日`;
+}
+let calendarView = null;
+
+function isoLocalDate(date){
+  const y=date.getFullYear();
+  const m=String(date.getMonth()+1).padStart(2,'0');
+  const d=String(date.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+function parseLocalDate(iso){
+  const [y,m,d]=iso.split('-').map(Number);
+  return new Date(y,m-1,d,12,0,0);
+}
+function closeDatePicker(){
+  $('calendarPopup').hidden=true;
+  $('dateControl').setAttribute('aria-expanded','false');
+}
+function renderCalendar(){
+  if(!calendarView) calendarView=parseLocalDate($('startDate').value || isoLocalDate(new Date()));
+  const year=calendarView.getFullYear(), month=calendarView.getMonth();
+  $('calMonthLabel').textContent=`${year}年${month+1}月`;
+  const first=new Date(year,month,1,12);
+  const gridStart=new Date(year,month,1-first.getDay(),12);
+  const selected=$('startDate').value;
+  const today=isoLocalDate(new Date());
+  let html='';
+  for(let i=0;i<42;i++){
+    const d=new Date(gridStart);
+    d.setDate(gridStart.getDate()+i);
+    const iso=isoLocalDate(d);
+    const cls=['cal-day'];
+    if(d.getMonth()!==month) cls.push('muted');
+    if(iso===selected) cls.push('selected');
+    if(iso===today) cls.push('today');
+    html+=`<button type="button" class="${cls.join(' ')}" data-date="${iso}" aria-label="${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日" ${iso===selected?'aria-pressed="true"':'aria-pressed="false"'}>${d.getDate()}</button>`;
+  }
+  $('calendarDays').innerHTML=html;
+}
+function openDatePicker(){
+  calendarView=parseLocalDate($('startDate').value || isoLocalDate(new Date()));
+  renderCalendar();
+  $('calendarPopup').hidden=false;
+  $('dateControl').setAttribute('aria-expanded','true');
+}
+function selectCalendarDate(iso){
+  $('startDate').value=iso;
+  $('startDateDisplay').textContent=formatDateHK(iso);
+  closeDatePicker();
+  $('dateControl').focus({preventScroll:true});
+  if(typeof markOrderDirty==='function') markOrderDirty();
+}
+
+
+const customSelectIds=['mode','highFat','lowFatA','lowFatB','heart','liver','secondOrgan','bone','deliveryWeekday','orderWeekday','portionDiet','portionNeutered','portionActive'];
+
+function choiceParts(text){
+  const parts=String(text||'').split('｜').map(x=>x.trim()).filter(Boolean);
+  return {main:parts[0]||'',meta:parts.slice(1).join(' · ')};
+}
+
+function buildChoiceMenu(select){
+  if(!select) return;
+  select.classList.add('native-select-hidden');
+  let wrap=select.nextElementSibling;
+  if(!wrap || !wrap.classList.contains('choice-wrap')){
+    wrap=document.createElement('div');
+    wrap.className='choice-wrap';
+    wrap.innerHTML=`<button type="button" class="choice-control" aria-haspopup="listbox" aria-expanded="false">
+      <span class="choice-value"></span>
+      <span class="choice-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 10 5 5 5-5"/></svg>
+      </span>
+    </button><div class="choice-menu" role="listbox" hidden></div>`;
+    select.insertAdjacentElement('afterend',wrap);
+
+    const control=wrap.querySelector('.choice-control');
+    control.addEventListener('click',()=>{
+      const opening=wrap.querySelector('.choice-menu').hidden;
+      closeAllChoiceMenus(wrap);
+      wrap.classList.toggle('open',opening);
+      wrap.querySelector('.choice-menu').hidden=!opening;
+      control.setAttribute('aria-expanded',opening?'true':'false');
+    });
+
+    wrap.querySelector('.choice-menu').addEventListener('click',(event)=>{
+      const option=event.target.closest('[data-choice-value]');
+      if(!option) return;
+      select.value=option.dataset.choiceValue;
+      syncChoiceMenu(select);
+      wrap.classList.remove('open');
+      wrap.querySelector('.choice-menu').hidden=true;
+      control.setAttribute('aria-expanded','false');
+      select.dispatchEvent(new Event('change',{bubbles:true}));
+      control.focus({preventScroll:true});
+    });
+  }
+  syncChoiceMenu(select);
+}
+
+function syncChoiceMenu(select){
+  const wrap=select.nextElementSibling;
+  if(!wrap || !wrap.classList.contains('choice-wrap')) return;
+  const selected=select.options[select.selectedIndex];
+  wrap.querySelector('.choice-value').textContent=selected?.textContent||'請選擇';
+  wrap.querySelector('.choice-menu').innerHTML=[...select.options].map(opt=>{
+    const p=choiceParts(opt.textContent);
+    const isSelected=opt.value===select.value;
+    return `<button type="button" class="choice-option${isSelected?' selected':''}" role="option" aria-selected="${isSelected?'true':'false'}" data-choice-value="${opt.value}">
+      <span class="choice-option-copy"><span class="choice-option-main">${p.main}</span>${p.meta?`<span class="choice-option-meta">${p.meta}</span>`:''}</span>
+      ${isSelected?'<span class="choice-check">✓</span>':''}
+    </button>`;
+  }).join('');
+}
+
+function refreshCustomSelects(){
+  customSelectIds.forEach(id=>buildChoiceMenu($(id)));
+}
+
+function closeAllChoiceMenus(exceptWrap=null){
+  document.querySelectorAll('.choice-wrap').forEach(wrap=>{
+    if(wrap===exceptWrap) return;
+    wrap.classList.remove('open');
+    const menu=wrap.querySelector('.choice-menu');
+    const control=wrap.querySelector('.choice-control');
+    if(menu) menu.hidden=true;
+    if(control) control.setAttribute('aria-expanded','false');
+  });
+}
+
+function populate(){
+  $('highFat').innerHTML=optionsFor('高脂肉','chicken_thigh');
+  $('lowFatA').innerHTML=optionsFor('低脂肉','beef_knuckle_br');
+  $('lowFatB').innerHTML=optionsFor('低脂肉','turkey_breast');
+  $('heart').innerHTML=optionsFor('肌肉內臟','beef_heart');
+  $('liver').innerHTML=optionsFor('肝','chicken_liver');
+  $('secondOrgan').innerHTML=optionsFor('第二內臟','beef_kidney');
+  $('bone').innerHTML=optionsFor('骨','chicken_neck_cut');
+  renderInventory();
+  renderPriceTables();
+  refreshCustomSelects();
+}
+const inventoryDefs=[
+  {key:'highFat',label:'高脂肉'},
+  {key:'lowFat',label:'低脂肉'},
+  {key:'heart',label:'心'},
+  {key:'liver',label:'肝'},
+  {key:'secondOrgan',label:'第二內臟'},
+  {key:'bone',label:'骨'}
+];
+function renderInventory(){
+  const prev={};
+  document.querySelectorAll('[data-inv-cat]').forEach(x=>prev[x.dataset.invCat]=x.value);
+  $('inventoryGrid').innerHTML=inventoryDefs.map(x=>
+    `<div class="field"><label>${x.label}</label><input type="number" min="0" step="1" inputmode="decimal" data-inv-cat="${x.key}" value="${prev[x.key]??''}" placeholder="請輸入剩貨"></div>`
+  ).join('');
+}
+function inventoryCategoryG(key){
+  const el=document.querySelector(`[data-inv-cat="${key}"]`);
+  return Number(el?.value||0);
+}
+function categoryKeyForId(id){
+  if(id===$('highFat').value) return 'highFat';
+  if(id===$('lowFatA').value || id===$('lowFatB').value) return 'lowFat';
+  if(id===$('heart').value) return 'heart';
+  if(id===$('liver').value) return 'liver';
+  if(id===$('secondOrgan').value) return 'secondOrgan';
+  if(id===$('bone').value) return 'bone';
+  return null;
+}
+function dailyMap(){
+  return {
+    [$('highFat').value]:Number($('gHigh').value),
+    [$('lowFatA').value]:(Number($('gLowA').value)+( $('lowFatA').value===$('lowFatB').value ? Number($('gLowB').value):0 )),
+    ...($('lowFatA').value===$('lowFatB').value?{}:{[$('lowFatB').value]:Number($('gLowB').value)}),
+    [$('heart').value]:Number($('gHeart').value),
+    [$('liver').value]:Number($('gLiver').value),
+    [$('secondOrgan').value]:Number($('gSecond').value),
+    [$('bone').value]:Number($('gBone').value)
+  };
+}
+function baseOrder(days){
+  const dm=dailyMap(), rows=[];
+  const entries=Object.entries(dm).map(([id,gpd])=>({id,gpd,p:pById(id),need:gpd*days,catKey:categoryKeyForId(id)}));
+  const catNeeds={};
+  entries.forEach(r=>catNeeds[r.catKey]=(catNeeds[r.catKey]||0)+r.need);
+  let total=0;
+  for(const r of entries){
+    const catStock=inventoryCategoryG(r.catKey);
+    const totalCatNeed=catNeeds[r.catKey]||0;
+    const stock=totalCatNeed>0 ? catStock*(r.need/totalCatNeed) : 0;
+    const short=Math.max(0,r.need-stock);
+    const packs=Math.ceil(short/r.p.unitG-1e-12);
+    const buyG=packs*r.p.unitG, cost=packs*r.p.price, leftover=stock+buyG-r.need;
+    total+=cost;
+    rows.push({...r,stock,packs,buyG,cost,leftover});
+  }
+  return {days,rows,total};
+}
+function topUpToMinimum(order,minOrder){
+  if(order.total>=minOrder) return {...order, topups:[]};
+  const rows=order.rows;
+  let best=null;
+  // Search up to 5 extra packs for each selected ingredient by DFS with pruning.
+  const cand=rows.map(r=>r.p);
+  function dfs(i,extraCost,extraG,counts){
+    const current=order.total+extraCost;
+    if(current>=minOrder){
+      const leftovers=rows.reduce((s,r,idx)=>s+r.leftover+(counts[idx]||0)*r.p.unitG,0);
+      const over=current-minOrder;
+      const score=[leftovers, over, current];
+      if(!best || score[0]<best.score[0]-1e-9 || 
+         (score[0]===best.score[0] && (score[1]<best.score[1]-1e-9 || (score[1]===best.score[1] && score[2]<best.score[2])))){
+        best={counts:[...counts],extraCost,score};
+      }
+      return;
+    }
+    if(i>=cand.length) return;
+    // cap extras, enough for practical use
+    for(let k=0;k<=5;k++){
+      counts[i]=k;
+      dfs(i+1,extraCost+k*cand[i].price,extraG+k*cand[i].unitG,counts);
+    }
+    counts[i]=0;
+  }
+  dfs(0,0,0,new Array(cand.length).fill(0));
+  if(!best) return {...order,topups:[]};
+  const newRows=rows.map((r,i)=>({...r,packs:r.packs+best.counts[i],buyG:r.buyG+best.counts[i]*r.p.unitG,cost:r.cost+best.counts[i]*r.p.price,leftover:r.leftover+best.counts[i]*r.p.unitG}));
+  const topups=newRows.map((r,i)=>best.counts[i]?{name:r.p.name,packs:best.counts[i]}:null).filter(Boolean);
+  return {days:order.days,rows:newRows,total:order.total+best.extraCost,topups};
+}
+function dateAdd(dateStr,delta){
+  const d=new Date(dateStr+'T12:00:00');
+  d.setDate(d.getDate()+delta);
+  return d;
+}
+function fdate(d){return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()}`}
+const WEEKDAY_NAMES=['星期日','星期一','星期二','星期三','星期四','星期五','星期六'];
+function weekdayName(day){return WEEKDAY_NAMES[Number(day)]||''}
+function latestWeekdayOnOrBefore(d,targetDay){
+  const x=new Date(d);
+  const back=(x.getDay()-Number(targetDay)+7)%7;
+  x.setDate(x.getDate()-back);
+  return x;
+}
+function latestWeekdayBefore(d,targetDay){
+  const x=new Date(d);
+  let back=(x.getDay()-Number(targetDay)+7)%7;
+  if(back===0) back=7;
+  x.setDate(x.getDate()-back);
+  return x;
+}
+function scheduleFor(days){
+  const start=$('startDate').value;
+  const last=dateAdd(start,days-1);
+  const deliveryDay=Number($('deliveryWeekday').value);
+  const orderDay=Number($('orderWeekday').value);
+  const delivery=latestWeekdayOnOrBefore(last,deliveryDay);
+  const order=latestWeekdayBefore(delivery,orderDay);
+  return {last,delivery,order,deliveryDay,orderDay};
+}
+
+function isMaxDailyUnlimited(){
+  return $('maxDailyUnlimitedBtn')?.getAttribute('aria-pressed')==='true';
+}
+function applyMaxDailyUnlimited(unlimited){
+  const btn=$('maxDailyUnlimitedBtn');
+  const input=$('maxDaily');
+  if(!btn || !input) return;
+  const on=!!unlimited;
+  btn.setAttribute('aria-pressed',on?'true':'false');
+  btn.classList.toggle('active',on);
+  btn.closest('.limit-control')?.classList.toggle('is-unlimited',on);
+  input.disabled=on;
+}
+
+function evaluate(days){
+  const minOrder=Number($('minOrder').value);
+  const maxDaily=Number($('maxDaily').value);
+  const maxDailyUnlimited=isMaxDailyUnlimited();
+  let o=topUpToMinimum(baseOrder(days),minOrder);
+  o.daily=o.total/days;
+  o.leftoverG=o.rows.reduce((s,r)=>s+r.leftover,0);
+  o.leftoverValue=o.rows.reduce((s,r)=>s+(r.leftover/r.p.unitG)*r.p.price,0);
+  o.ok=o.total>=minOrder && (maxDailyUnlimited || o.daily<=maxDaily);
+  return o;
+}
+function pickBest(){
+  if($('mode').value==='fixed') return [evaluate(Number($('fixedDays').value))];
+  const lo=Number($('minDays').value), hi=Number($('maxDays').value);
+  const arr=[];
+  for(let d=lo;d<=hi;d++) arr.push(evaluate(d));
+  const feasible=arr.filter(x=>x.ok);
+  const sorted=(feasible.length?feasible:arr).sort((a,b)=>
+    a.leftoverG-b.leftoverG || a.leftoverValue-b.leftoverValue || a.daily-b.daily || a.total-b.total
+  );
+  return [sorted[0], ...arr.filter(x=>x!==sorted[0]).sort((a,b)=>a.days-b.days)];
+}
+function renderResult(){
+  const results=pickBest(), best=results[0], sched=scheduleFor(best.days);
+  const maxDaily=Number($('maxDaily').value);
+  const maxDailyUnlimited=isMaxDailyUnlimited();
+  let html=`<div class="card best">
+    <div class="result-title"><h2>⭐ 建議：${best.days} 日份量</h2><span class="pill">${best.ok?'符合設定':'未符合設定'}</span></div>
+    <div class="kpis">
+      <div class="kpi"><span>總價</span><b>${money(best.total)}</b></div>
+      <div class="kpi"><span>每日成本</span><b class="${maxDailyUnlimited || best.daily<=maxDaily?'good':'bad'}">${money(best.daily)}</b></div>
+      <div class="kpi"><span>剩貨</span><b>${Math.round(best.leftoverG)}g</b></div>
+      <div class="kpi"><span>食到</span><b>${fdate(sched.last)}</b></div>
+    </div>
+    <hr>
+    <div class="grid">
+      <div><div class="note">最遲落單</div><b>${sched.order?fdate(sched.order):'未設定'}（${weekdayName(sched.orderDay)}）</b></div>
+      <div><div class="note">收貨日期</div><b>${sched.delivery?fdate(sched.delivery):'未設定'}（${weekdayName(sched.deliveryDay)}）</b></div>
+    </div>
+    <hr>
+    <div class="table-wrap"><table><thead><tr><th>食材</th><th>扣剩貨</th><th>需要</th><th>購買</th><th>價錢</th><th>剩餘</th></tr></thead><tbody>
+    ${best.rows.map(r=>`<tr>
+      <td><b>${r.p.name}</b><br><span class="note">${r.p.unitLabel}</span></td>
+      <td>${Math.round(r.stock)}g</td><td>${Math.round(r.need)}g</td>
+      <td>${r.packs} × ${r.p.unitLabel}</td><td>$${r.cost}</td><td>${Math.round(r.leftover)}g</td>
+    </tr>`).join('')}
+    </tbody></table></div>
+    ${best.topups?.length?`<div class="note" style="margin-top:10px">為達最低 $${$('minOrder').value} 送貨，已自動加單：${best.topups.map(x=>`${x.name} +${x.packs}包`).join('、')}。</div>`:''}
+  </div>`;
+
+  if($('mode').value==='auto'){
+    const all=results.slice(1);
+    const candidates=[best, ...all.filter(x=>x.ok).sort((a,b)=>a.leftoverG-b.leftoverG).slice(0,5)].filter((v,i,a)=>a.findIndex(x=>x.days===v.days)===i);
+    html+=`<div class="card"><h2><span class="step">✦</span> 日數比較</h2><div class="table-wrap"><table><thead><tr><th>日數</th><th>Order</th><th>$/日</th><th>剩貨</th><th></th></tr></thead><tbody>
+    ${candidates.map((x,i)=>`<tr><td><b>${x.days}日</b></td><td>${money(x.total)}</td><td>${money(x.daily)}</td><td>${Math.round(x.leftoverG)}g</td><td>${i===0?'⭐ 最佳':''}</td></tr>`).join('')}
+    </tbody></table></div></div>`;
+  }
+  $('results').innerHTML=html;
+}
+function renderPriceTables(){
+  const cats=['高脂肉','低脂肉','肌肉內臟','肝','第二內臟','骨'];
+  const dotClass = cat => cat==='高脂肉'?'dot-hi':cat==='低脂肉'?'dot-lo':(cat==='骨'?'dot-bone':'dot-org');
+  $('priceTables').innerHTML=cats.map(cat=>`<div class="price-head"><h3><span class="category-dot ${dotClass(cat)}"></span>${cat}</h3></div>
+  <div class="table-wrap"><table><thead><tr><th>食材</th><th>單位</th><th>價錢</th></tr></thead><tbody>
+  ${products.filter(p=>p.cat===cat).map(p=>`<tr><td>${p.name}</td><td>${p.unitLabel}</td><td><div class="price-input-wrap"><span class="price-prefix">$</span><input data-price="${p.id}" type="number" value="${p.price}" aria-label="${p.name} 價錢"></div></td></tr>`).join('')}
+  </tbody></table></div>`).join('');
+  document.querySelectorAll('[data-price]').forEach(el=>el.addEventListener('change',()=>{
+    const p=pById(el.dataset.price); p.price=Number(el.value); save();
+    populate();
+  }));
+}
+
+function portionAge(){
+  const years=Math.max(0,Number($('portionAgeYears').value)||0);
+  const months=Math.min(11,Math.max(0,Number($('portionAgeMonths').value)||0));
+  return years + months/12;
+}
+
+function rawMeatRatioFromToFill(age,neutered,active){
+  // Mirrors To fill!B19.
+  if(age<=4/12) return 0.10;
+  if(age<=5/12) return 0.08;
+  if(age<=7/12) return 0.07;
+  if(age<=8/12) return 0.06;
+  if(age<=10/12) return 0.05;
+  if(age<1) return 0.04;
+  if(age>=7) return 0.04;
+  if(active==='yes') return 0.04;
+  if(neutered==='no') return 0.04;
+  return 0.03;
+}
+
+function portionRatios(age,diet){
+  const adult=age>=1;
+  if(diet==='withBones'){
+    const heart=0.10;
+    const liver=0.05;
+    const bone=(adult?0.06:0.10)/0.36;
+    const low=adult?0.34:0.35;
+    const high=1-heart-liver-bone-low;
+    return {heart,liver,bone,low,high};
+  }
+  const base=adult?0.94:0.90;
+  const heart=0.10/base;
+  const liver=0.05/base;
+  const bone=0;
+  const low=(adult?0.34:0.35)/base;
+  const high=1-heart-liver-low;
+  return {heart,liver,bone,low,high};
+}
+
+function ageLabel(age){
+  if(age<1){
+    const months=Math.round(age*12);
+    return `${months} 個月`;
+  }
+  const years=Math.floor(age);
+  const months=Math.round((age-years)*12);
+  return months ? `${years} 歲 ${months} 個月` : `${years} 歲`;
+}
+
+function renderPortionRecommendation(){
+  const age=portionAge();
+  const weight=Number($('portionWeight').value);
+  const diet=$('portionDiet').value;
+  const neutered=$('portionNeutered').value;
+  const active=$('portionActive').value;
+
+  if(age<=0 || !(weight>0) || !diet || !neutered || !active){
+    $('portionResults').innerHTML=`<div class="card"><div class="note">請先完成以上資料。</div></div>`;
+    return;
+  }
+
+  const baseRatio=rawMeatRatioFromToFill(age,neutered,active);
+  const withBonesG=weight*baseRatio*1000; // To fill!B21
+  const totalG=diet==='withBones' ? withBonesG : withBonesG*(age>=1?0.94:0.90); // B23 via B22
+  const ratios=portionRatios(age,diet);
+  const actualRatio=totalG/(weight*1000);
+
+  const grams={
+    high:totalG*ratios.high,
+    low:totalG*ratios.low,
+    heart:totalG*ratios.heart,
+    liver:totalG*ratios.liver,
+    bone:totalG*ratios.bone
+  };
+
+  const dietText=diet==='withBones'?'連骨':'無骨';
+  const statusText=[
+    neutered==='yes'?'已絕育':'未絕育',
+    active==='yes'?'高活動量':'一般活動量'
+  ];
+
+  let rule='';
+  if(age<=4/12) rule='原表年齡比例：10% 體重';
+  else if(age<=5/12) rule='原表年齡比例：8% 體重';
+  else if(age<=7/12) rule='原表年齡比例：7% 體重';
+  else if(age<=8/12) rule='原表年齡比例：6% 體重';
+  else if(age<=10/12) rule='原表年齡比例：5% 體重';
+  else if(age<1) rule='原表年齡比例：4% 體重';
+  else if(age>=7 || active==='yes' || neutered==='no') rule='原表成人比例：4% 體重';
+  else rule='原表成人比例：3% 體重';
+
+  if(diet==='boneless'){
+    rule+=age>=1?'；無骨再按 94% 計算':'；無骨再按 90% 計算';
+  }
+
+  $('portionResults').innerHTML=`
+    <div class="card">
+      <div class="portion-hero">
+        <div class="portion-label">建議每日總量</div>
+        <div class="portion-value">${Math.round(totalG)}<small>g / 日</small></div>
+        <div class="portion-meta">
+          <span class="portion-chip">${ageLabel(age)}</span>
+          <span class="portion-chip">${weight} kg</span>
+          <span class="portion-chip">${dietText}</span>
+          <span class="portion-chip">約 ${(actualRatio*100).toFixed(1)}% 體重</span>
+        </div>
+      </div>
+
+      <div class="portion-breakdown">
+        <div class="portion-item"><span>高脂肉</span><b>${Math.round(grams.high)}g</b></div>
+        <div class="portion-item"><span>低脂肉</span><b>${Math.round(grams.low)}g</b></div>
+        <div class="portion-item"><span>心</span><b>${Math.round(grams.heart)}g</b></div>
+        <div class="portion-item"><span>肝</span><b>${Math.round(grams.liver)}g</b></div>
+        <div class="portion-item"><span>骨</span><b>${Math.round(grams.bone)}g</b></div>
+      </div>
+
+      <div class="portion-rule">${rule}。${statusText.join(' · ')}。比例沿用 Excel「To fill」；原表未有第二內臟獨立比例。</div>
+    </div>`;
+}
+
+function save(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify({
+    products,
+    minOrder:$('minOrder').value,maxDaily:$('maxDaily').value,maxDailyUnlimited:isMaxDailyUnlimited(),minDays:$('minDays').value,maxDays:$('maxDays').value,
+    deliveryWeekday:$('deliveryWeekday').value,orderWeekday:$('orderWeekday').value,
+    gHigh:$('gHigh').value,gLowA:$('gLowA').value,gLowB:$('gLowB').value,gHeart:$('gHeart').value,gLiver:$('gLiver').value,gSecond:$('gSecond').value,gBone:$('gBone').value,
+    portionAgeYears:$('portionAgeYears').value,portionAgeMonths:$('portionAgeMonths').value,portionWeight:$('portionWeight').value,
+    portionDiet:$('portionDiet').value,portionNeutered:$('portionNeutered').value,portionActive:$('portionActive').value
+  }));
+}
+function load(){
+  let x=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');
+
+  // First v25 visit: keep supplier/order settings from older versions,
+  // but deliberately do not import any cat-specific profile or feeding values.
+  if(!x){
+    const legacy=JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY)||'null');
+    if(legacy){
+      x={
+        products:legacy.products
+      };
+      localStorage.setItem(STORAGE_KEY,JSON.stringify(x));
+    }
+  }
+
+  if(x?.products) products=x.products;
+  if(x){
+    $('minOrder').value=x.minOrder ?? '';
+    $('maxDaily').value=x.maxDaily ?? '';
+    applyMaxDailyUnlimited(x.maxDailyUnlimited===true);
+    $('minDays').value=x.minDays ?? '';
+    $('maxDays').value=x.maxDays ?? '';
+    $('deliveryWeekday').value=x.deliveryWeekday ?? '';
+    $('orderWeekday').value=x.orderWeekday ?? '';
+
+    $('gHigh').value=x.gHigh ?? '';
+    $('gLowA').value=x.gLowA ?? '';
+    $('gLowB').value=x.gLowB ?? '';
+    $('gHeart').value=x.gHeart ?? '';
+    $('gLiver').value=x.gLiver ?? '';
+    $('gSecond').value=x.gSecond ?? '';
+    $('gBone').value=x.gBone ?? '';
+
+    $('portionAgeYears').value=x.portionAgeYears ?? '';
+    $('portionAgeMonths').value=x.portionAgeMonths ?? '';
+    $('portionWeight').value=x.portionWeight ?? '';
+    $('portionDiet').value=x.portionDiet ?? '';
+    $('portionNeutered').value=x.portionNeutered ?? '';
+    $('portionActive').value=x.portionActive ?? '';
+  }else{
+    applyMaxDailyUnlimited(false);
+  }
+}
+
+
+function setActionState(buttonId,enabled){
+  const btn=$(buttonId);
+  if(btn) btn.disabled=!enabled;
+}
+
+function markSettingsDirty(){
+  setActionState('saveBtn',true);
+}
+function markOrderDirty(){
+  setActionState('calcBtn',true);
+}
+function markPortionDirty(){
+  setActionState('portionCalcBtn',true);
+}
+
+function initActionStates(){
+  setActionState('saveBtn',false);
+  setActionState('calcBtn',false);
+  setActionState('portionCalcBtn',false);
+}
+
+/* 餵食設定：任何欄位有改動先可以儲存 */
+[
+  'gHigh','gLowA','gLowB','gHeart','gLiver','gSecond','gBone',
+  'deliveryWeekday','orderWeekday','minOrder','maxDaily','minDays','maxDays'
+].forEach(id=>{
+  const el=$(id);
+  if(!el) return;
+  el.addEventListener('input',markSettingsDirty);
+  el.addEventListener('change',markSettingsDirty);
+});
+
+/* 落單：有改動先可以重新計算 */
+[
+  'startDate','mode','fixedDays','highFat','lowFatA','lowFatB','heart','liver','secondOrgan','bone'
+].forEach(id=>{
+  const el=$(id);
+  if(!el) return;
+  el.addEventListener('input',markOrderDirty);
+  el.addEventListener('change',markOrderDirty);
+});
+document.addEventListener('input',event=>{
+  if(event.target.matches('[data-inv-cat]')) markOrderDirty();
+});
+
+/* 份量建議：有改動先可以計算 */
+[
+  'portionAgeYears','portionAgeMonths','portionWeight','portionDiet','portionNeutered','portionActive'
+].forEach(id=>{
+  const el=$(id);
+  if(!el) return;
+  el.addEventListener('input',markPortionDirty);
+  el.addEventListener('change',markPortionDirty);
+});
+
+document.querySelectorAll('.subtab').forEach(button=>button.addEventListener('click',()=>{
+  const key=button.dataset.subtab;
+  document.querySelectorAll('.subtab').forEach(x=>{
+    const active=x===button;
+    x.classList.toggle('active',active);
+    x.setAttribute('aria-selected',active?'true':'false');
+  });
+  document.querySelectorAll('.subpanel').forEach(x=>x.classList.toggle('active',x.dataset.subpanel===key));
+  closeAllCustomSelects();
+  closeDatePicker();
+}));
+
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));
+  b.classList.add('active'); $(b.dataset.tab).classList.add('active');
+  closeAllCustomSelects();
+  closeDatePicker();
+}));
+$('dateControl').setAttribute('aria-haspopup','dialog');
+$('dateControl').setAttribute('aria-expanded','false');
+$('dateControl').addEventListener('click',()=>{
+  if($('calendarPopup').hidden) openDatePicker();
+  else closeDatePicker();
+});
+$('calPrev').addEventListener('click',()=>{
+  calendarView.setMonth(calendarView.getMonth()-1);
+  renderCalendar();
+});
+$('calNext').addEventListener('click',()=>{
+  calendarView.setMonth(calendarView.getMonth()+1);
+  renderCalendar();
+});
+$('calToday').addEventListener('click',()=>selectCalendarDate(isoLocalDate(new Date())));
+$('calClose').addEventListener('click',closeDatePicker);
+$('calendarDays').addEventListener('click',(event)=>{
+  const day=event.target.closest('[data-date]');
+  if(day) selectCalendarDate(day.dataset.date);
+});
+document.addEventListener('pointerdown',(event)=>{
+  const dateWrap=$('dateControl').closest('.date-wrap');
+  if(!$('calendarPopup').hidden && !dateWrap.contains(event.target)) closeDatePicker();
+  if(!event.target.closest('.choice-wrap')) closeAllChoiceMenus();
+});
+document.addEventListener('keydown',(event)=>{
+  if(event.key==='Escape'){
+    if(!$('calendarPopup').hidden){
+      closeDatePicker();
+      $('dateControl').focus({preventScroll:true});
+    }
+    closeAllChoiceMenus();
+  }
+});
+$('mode').addEventListener('change',()=>{$('fixedWrap').style.display=$('mode').value==='fixed'?'block':'none'});
+
+$('clearDailyBtn').addEventListener('click',()=>{
+  ['gHigh','gLowA','gLowB','gHeart','gLiver','gSecond','gBone'].forEach(id=>{
+    const el=$(id);
+    if(el) el.value='';
+  });
+  markSettingsDirty();
+});
+
+$('maxDailyUnlimitedBtn').addEventListener('click',()=>{
+  applyMaxDailyUnlimited(!isMaxDailyUnlimited());
+  markSettingsDirty();
+});
+$('calcBtn').addEventListener('click',()=>{renderResult();setActionState('calcBtn',false);});
+$('portionCalcBtn').addEventListener('click',()=>{renderPortionRecommendation();save();setActionState('portionCalcBtn',false);});
+$('saveBtn').addEventListener('click',()=>{
+  save();
+  setActionState('saveBtn',false);
+  $('saveBtn').textContent='已儲存 ✓';
+  setTimeout(()=>$('saveBtn').textContent='儲存',1200);
+});
+load(); populate(); $('startDateDisplay').textContent=formatDateHK($('startDate').value); initActionStates();
+</script>
+</body>
+</html>
